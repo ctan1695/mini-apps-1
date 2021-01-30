@@ -2,11 +2,14 @@
   <script data-main="../server.js" src="../node_modules/requirejs/require.js"></script>
 </head>
 <body>
+  <h1>Convert JSON Data to CSV Report</h1>
   <form action="http://localhost:5500/submit-form" method="POST">
     <label for="text">Enter JSON data here:</label>
     <textarea name="text"></textarea>
     <input type="submit" value="Convert">
   </form>
+
+  <div class="results">Here is where your CSV Report will be!:</div>
 
   <script src=""></script>
   <script src="app.js"></script>
