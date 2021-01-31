@@ -3,66 +3,126 @@ const path = require('path');
 const port = 5500;
 // const partials = require('express-partials');
 const bodyParser = require('body-parser');
+//const fileUpload = require('express-fileupload');
+const multer = require('multer');
+const upload = multer({dest: path.join(__dirname, 'uploads/')});
+const fs = require('fs');
 const app = express();
 
-app.set('views', `${__dirname}`);
-app.set('view engine', 'ejs');
-
+// app.set('views', `${__dirname}`);
+// app.set('view engine', 'ejs');
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
 // app.use(partials());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(express.static(path.join(__dirname, '../public')));
 
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(fileUpload({debug: true}));
+
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/index.html'));
+  res.render('index', {inputtedText: '', lines: []});
+  // res.sendFile(path.join(__dirname, 'client', 'index.html'));
 })
 
-app.post('/submit-form', (req, res) => {
-  var reqJSON = JSON.parse(req.body.text);
-  var columnHeaders = Object.keys(reqJSON);
+app.post('/submit-form', upload.any(), (req, res) => {
+  var uploadsPath = path.join(__dirname, 'uploads');
+  var fileName;
+  var filePath;
+  var parsedFileContents;
+  var columnHeaders;
   var csvReport = [];
 
-  columnHeaders.pop();
-  csvReport.push(columnHeaders.toString());
-
-  //recursive function to loop through json
-  var convertToCSV = function (item) {
-
-    var textLine = '';
-    for (var keys in item) {
-      if (keys !== 'children') {
-        textLine += item[keys].toString();
-
-        if (keys !== 'sales') {
-          textLine += ',';
-        }
-      }
-
-    }
-
-    csvReport.push(textLine);
-
-    if (item.children.length !== 0) {
-      for (var i = 0; i < item.children.length; i++) {
-        convertToCSV(item.children[i]);
-      }
+  fs.readdir(uploadsPath, 'utf8', (err, files) => {
+    if (err) {
+      console.log('err: ', err);
     } else {
-      return;
+      console.log('files...');
+      files.forEach(file => {
+        console.log(' file: ', file);
+        fileName = file;
+        filePath = path.join(uploadsPath, fileName);
+        console.log('filePath: ', filePath);
+
+        var fileContents = fs.readFileSync(filePath);
+        parsedFileContents = JSON.parse(fileContents);
+        columnHeaders = Object.keys(parsedFileContents);
+        columnHeaders.pop();
+        csvReport.push(columnHeaders.toString());
+
+        var convertToCSV = function (item) {
+          var textLine = '';
+          for (var keys in item) {
+            if (keys !== 'children') {
+              textLine += item[keys].toString();
+
+              if (keys !== 'sales') {
+                textLine += ',';
+              }
+            }
+          }
+          csvReport.push(textLine);
+          if (item.children.length !== 0) {
+            for (var i = 0; i < item.children.length; i++) {
+              convertToCSV(item.children[i]);
+            }
+          } else {
+            return;
+          }
+        }
+
+        convertToCSV(parsedFileContents);
+        console.log('csvReport: ', csvReport);
+        res.render('index', {inputtedText: req.body.text, lines: csvReport});
+      })
     }
-
-  }
-
-  convertToCSV(reqJSON);
-  //send the html + new div with my csv report.
-
-  //clientSide.displayResults(csvReport);
- // res.send(csvReport);
-  res.render('result', {inputtedText: req.body.text, lines: csvReport});
-  //res.sendFile(path.join(__dirname + '/client/index.html'));
-
+  });
 })
+
+
+// app.post('/submit-form', (req, res) => {
+//   console.log('req: ', req);
+//   // //test BEGIN
+//   // var rawData = fs.readFileSync(path.join(__dirname, 'samples', 'sales_report.json'), 'utf8');
+//   // var parsedData = JSON.parse(rawData);
+//   // console.log('parsedData: ', parsedData);
+//   // //test END
+
+//   var reqJSON = JSON.parse(req.body.text);
+//   var columnHeaders = Object.keys(reqJSON);
+//   var csvReport = [];
+
+//   columnHeaders.pop();
+//   csvReport.push(columnHeaders.toString());
+
+//   var convertToCSV = function (item) {
+
+//     var textLine = '';
+//     for (var keys in item) {
+//       if (keys !== 'children') {
+//         textLine += item[keys].toString();
+
+//         if (keys !== 'sales') {
+//           textLine += ',';
+//         }
+//       }
+
+//     }
+
+//     csvReport.push(textLine);
+
+//     if (item.children.length !== 0) {
+//       for (var i = 0; i < item.children.length; i++) {
+//         convertToCSV(item.children[i]);
+//       }
+//     } else {
+//       return;
+//     }
+//   }
+
+//   convertToCSV(reqJSON);
+//   res.render('index', {inputtedText: req.body.text, lines: csvReport});
+// })
 
 app.listen(port, () => {
   console.log('App is listening on port: ', port);
