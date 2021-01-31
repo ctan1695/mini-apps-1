@@ -5,10 +5,11 @@
   </head>
   <body>
     <h1>Convert JSON Data to CSV Report</h1>
-    <form action="http://localhost:5500/submit-form" enctype="multipart/form-data" method="POST" >
+    <!-- <form action="http://localhost:5500/submit-form" enctype="multipart/form-data" method="POST" > -->
+    <form>
       <label for="text">Enter JSON data here:</label>
       <input type="file" name="uploaded-file">
-      <input type="submit" value="Convert">
+      <input class="button" type="submit" value="Convert">
     </form>
 
     <div class="results">Here is your CSV Report:
