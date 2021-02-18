@@ -55,7 +55,7 @@ class App extends React.Component {
     var inputPassword = $('#password')[0].value;
 
     var dataJSON = JSON.stringify({
-      id: this.state.userID.toString(),
+      orderID: this.state.orderID,
       name: inputName,
       email: inputEmail,
       password: inputPassword
