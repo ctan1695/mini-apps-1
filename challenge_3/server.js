@@ -60,6 +60,24 @@ app.post('/payment', (req, res) => {
     })
 })
 
+app.get('/summary', (req, res) => {
+  var orderID = JSON.parse(Object.keys(req.query)[0]).orderID;
+
+  db.queryAsync(`
+    SELECT 	o.order_id, c.name, c.email, c.password, a.line_1, a.line_2, a.city, a.state, a.zip_code, a.phone_number, p.credit_card_number, p.expiry_date, p.cvv, p.billing_zip
+    FROM orders o
+    INNER JOIN customers c ON c.order_id = o.order_id
+    INNER JOIN addresses a ON a.order_id = o.order_id
+    INNER JOIN payment p ON p.order_id = o.order_id
+    WHERE o.order_id = ${orderID}`)
+    .then((results) => {
+      res.send(results);
+    })
+    .catch((err) => {
+      console.log('Error querying for order summary: ', err);
+    })
+})
+
 
 app.listen(port, () => {
   console.log(`Listening on port: ${port}`);

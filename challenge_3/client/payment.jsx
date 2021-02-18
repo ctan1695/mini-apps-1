@@ -1,9 +1,10 @@
 function Payment (props) {
   return (
     <div>
-    <h3>Enter your Payment Information</h3>
+    <h3>Checking Out Order #{props.currentOrderID.toString()}</h3>
 
     <form>
+      <h2>Enter your Payment Information<</h2>
       <div>
         <label >Credit Card #:</label>
         <input type="text" name="cc" id="cc" required></input>

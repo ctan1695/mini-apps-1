@@ -13,7 +13,8 @@ class App extends React.Component {
 
     this.state = {
       currentPage: Home,
-      orderID: 0
+      orderID: 0,
+      summaryInfo: {}
     }
 
     this.handleCheckout = this.handleCheckout.bind(this);
@@ -21,6 +22,7 @@ class App extends React.Component {
     this.handleNextForAddress = this.handleNextForAddress.bind(this);
     this.handleNextForPayment = this.handleNextForPayment.bind(this);
     this.handlePurchase = this.handlePurchase.bind(this);
+    this.displaySummary = this.displaySummary.bind(this);
   }
 
   handleCheckout() {
@@ -33,8 +35,8 @@ class App extends React.Component {
       method: 'POST',
       url: mainUrl + '/checkout',
       data: dataJSON,
-      contentType: 'application/json', //Sending JSON data type to server
-      dataType: 'text', //Expecting server to respond with a text data type (order's primary key as a string)
+      contentType: 'application/json',
+      dataType: 'text',
       success: (res) => {
         var parsedResponse = JSON.parse(res);
         orderCreated = parsedResponse[0][0]['LAST_INSERT_ID()'];
@@ -146,24 +148,46 @@ class App extends React.Component {
       data: dataJSON,
       success: () => {
         console.log(' handleNextForPayment success');
+        this.displaySummary((queryResults) => {
+          this.setState({summaryInfo: queryResults, currentPage: Confirmation})
+        });
       },
       error: (err) => {
         console.log('handleNextForPayment error: ', err);
       }
     })
+  }
 
-    this.setState({currentPage: Confirmation});
+  displaySummary(callback) {
+    var dataJSON = JSON.stringify({
+      orderID: this.state.orderID
+    });
+
+    $.ajax({
+      method: 'GET',
+      url: mainUrl + '/summary',
+      contentType: 'application/json',
+      data: dataJSON,
+      success: (res) => {
+        var queryResults = res[0][0];
+        callback(queryResults);
+      },
+      error: (err) => {
+        console.log('handlePurchase error: ', err);
+      }
+    })
   }
 
   handlePurchase(event) {
     event.preventDefault();
+
     this.setState({currentPage: Home});
   }
 
   render () {
     return (
       <this.state.currentPage currentOrderID={this.state.orderID} handleCheckout={this.handleCheckout}
-      handleNextForName={this.handleNextForName} handleNextForAddress={this.handleNextForAddress} handleNextForPayment={this.handleNextForPayment} handlePurchase={this.handlePurchase} />
+      handleNextForName={this.handleNextForName} handleNextForAddress={this.handleNextForAddress} handleNextForPayment={this.handleNextForPayment} handlePurchase={this.handlePurchase} summaryInfo={this.state.summaryInfo}/>
     )
   }
 }

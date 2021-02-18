@@ -1,9 +1,10 @@
 function Address (props) {
   return (
     <div>
-    <h3>Enter your Address</h3>
+    <h3>Summary for Order #{props.currentOrderID.toString()}</h3>
 
     <form>
+      <h2>Please Enter your Address</h2>
       <div>
         <label >Address Line 1:</label>
         <input type="text" name="addr1" id="addr1" required></input>
