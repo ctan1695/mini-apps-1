@@ -22,15 +22,11 @@ app.post('/checkout', (req, res) => {
     .catch((err) => {
       console.log('Error inserting into orders table: ', err);
     })
-
-  //For primary key just inserted, send back to client in response.
-  // res.send('done');
 })
 
 app.post('/name', (req, res) => {
-  console.log('/name req.body: ', req.body);
   var userInput = req.body;
-  //Insert into DB for inputted values with user_id = inputted user id.
+
   db.queryAsync(`INSERT INTO customers (name, email, password, order_id) values ('${userInput.name}', '${userInput.email}', '${userInput.password}', ${userInput.orderID})`)
     .then(() => {
       res.end();
@@ -38,7 +34,18 @@ app.post('/name', (req, res) => {
     .catch((err) => {
       console.log('Error inserting into customers table: ', err);
     })
+})
 
+app.post('/address', (req, res) => {
+  var userAddress = req.body;
+
+  db.queryAsync(`INSERT into addresses (line_1, line_2, city, state, zip_code, phone_number, order_id) VALUES ('${userAddress.addr1}', '${userAddress.addr2}', '${userAddress.city}', '${userAddress.state}', '${userAddress.zip}', '${userAddress.phone}', ${userAddress.orderID})`)
+    .then(() => {
+      res.end();
+    })
+    .catch((err) => {
+      console.log('Error inserting into addresses table: ', err);
+    })
 })
 
 

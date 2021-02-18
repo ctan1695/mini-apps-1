@@ -49,7 +49,6 @@ class App extends React.Component {
   handleNextForName(event) {
     event.preventDefault();
 
-    //AJAX request to POST new record into db (UPDATE customers table: Name, Email and Password columns with user inputted info WHERE ID = this.state.userID)
     var inputName = $('#name')[0].value;
     var inputEmail = $('#email')[0].value;
     var inputPassword = $('#password')[0].value;
@@ -66,9 +65,8 @@ class App extends React.Component {
       url: mainUrl + '/name',
       data: dataJSON,
       contentType: 'application/json',
-      dataType: 'text',
       success: (res) => {
-        console.log('handleNextForName success: ', res);
+        console.log('handleNextForName success');
       },
       error: (err) => {
         console.log('handleNextForName error: ', err);
@@ -81,8 +79,46 @@ class App extends React.Component {
   handleNextForAddress(event) {
     event.preventDefault();
 
-    //AJAX request to POST new record into db (INSERT into addresses table: non-FK columns should be the info from the customer's input and customer_ID should be this.state.userID)
+    var inputLine1 = $('#addr1')[0].value;
+    var inputLine2 = $('#addr2')[0].value;
+    var inputCity = $('#city')[0].value;
+    var inputState = $('#state')[0].value;
+    var inputZip = $('#zip')[0].value;
+    var inputPhone = $('#phone')[0].value;
 
+    var data = {
+      orderID: this.state.orderID,
+      addr1: inputLine1,
+      addr2: inputLine2,
+      city: inputCity,
+      state: inputState,
+      zip: inputZip,
+      phone: inputPhone
+    };
+    console.log('data; ', data);
+
+    var dataJSON = JSON.stringify({
+      orderID: this.state.orderID,
+      addr1: inputLine1,
+      addr2: inputLine2,
+      city: inputCity,
+      state: inputState,
+      zip: inputZip,
+      phone: inputPhone
+    });
+
+    $.ajax({
+      method: 'POST',
+      url: mainUrl + '/address',
+      data: dataJSON,
+      contentType: 'application/JSON',
+      success: () => {
+        console.log('handleNextForAddress success');
+      },
+      error: (err) => {
+        console.log('handleNextForAddress err: ', err);
+      }
+    })
 
     this.setState({currentPage: Payment});
   }
