@@ -48,6 +48,18 @@ app.post('/address', (req, res) => {
     })
 })
 
+app.post('/payment', (req, res) => {
+  var userPayment = req.body;
+
+  db.queryAsync(`INSERT INTO payment (credit_card_number, expiry_date, cvv, billing_zip, order_id) VALUES ('${userPayment.cc}', '${userPayment.exp}', '${userPayment.cvv}', '${userPayment.billing}', ${userPayment.orderID})`)
+    .then(() => {
+      res.end();
+    })
+    .catch((err) => {
+      console.log('Error inserting into payment table: ', err);
+    })
+})
+
 
 app.listen(port, () => {
   console.log(`Listening on port: ${port}`);

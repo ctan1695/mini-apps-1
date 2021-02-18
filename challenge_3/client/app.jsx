@@ -126,9 +126,32 @@ class App extends React.Component {
   handleNextForPayment(event) {
     event.preventDefault();
 
-    //AJAX request to POST new record into db (INSERT into payment table: non-FK columns should be the info from the customer's input and customer_ID should be this.state.userID)
-    //AJAX request to GET all information tied to this.state.userID.
-    //Set state using the info received on server response (should be the name, address and payment info for the user).
+    var inputCC = $('#cc')[0].value;
+    var inputExp = $('#exp')[0].value;
+    var inputCVV = $('#cvv')[0].value;
+    var inputBilling = $('#zip')[0].value;
+
+    var dataJSON = JSON.stringify({
+      orderID: this.state.orderID,
+      cc: inputCC,
+      exp: inputExp,
+      cvv: inputCVV,
+      billing: inputBilling
+    })
+
+    $.ajax({
+      method: 'POST',
+      url: mainUrl + '/payment',
+      contentType: 'application/json',
+      data: dataJSON,
+      success: () => {
+        console.log(' handleNextForPayment success');
+      },
+      error: (err) => {
+        console.log('handleNextForPayment error: ', err);
+      }
+    })
+
     this.setState({currentPage: Confirmation});
   }
 
