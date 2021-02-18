@@ -1,7 +1,7 @@
 function Address (props) {
   return (
     <div>
-    <h3>Summary for Order #{props.currentOrderID.toString()}</h3>
+    <h3>Checking Out Order #{props.currentOrderID.toString()}</h3>
 
     <form>
       <h2>Please Enter your Address</h2>
