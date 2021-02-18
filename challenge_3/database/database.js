@@ -1,9 +1,10 @@
+const Promise = require('bluebird');
+const createTables = require('./config.js');
+
 var mysql = require('mysql');
 var database = 'shopping';
-const createTables = require('config.js');
 
 var connection = mysql.createConnection({
-  host: 'http://localhost:3000',
   user: 'root',
   password: '',
   database: 'shopping'
@@ -18,11 +19,11 @@ connection.connectAsync()
   .then (() => {
     db.queryAsync(`CREATE DATABASE IF NOT EXISTS ${database}`);
   })
-  .then (() => {
-    db.queryAsync(`USE DATABASE ${database}`);
+  .then ((res) => {
+    db.queryAsync(`USE ${database}`);
   })
-  .then ((database) => {
-    createTables(database);
+  .then (() => {
+    createTables(db);
   })
   .catch ((err) => {
     console.log('Error encountered during connectAsync: ', err);

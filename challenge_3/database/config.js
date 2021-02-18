@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 
 var createTables = (database) => {
   if(!database.queryAsync) {
@@ -5,18 +6,12 @@ var createTables = (database) => {
   }
 
   return database.queryAsync(`
-    DROP TABLE IF NOT EXISTS payment;
-    DROP TABLE IF NOT EXISTS addresses;
-    DROP TABLE IF NOT EXISTS customers;
-    DROP TABLE IF EXISTS orders;`)
-    .then (() => {
-      return database.queryAsync(`
         CREATE TABLE IF NOT EXISTS orders
         (
         order_id INT NOT NULL AUTO_INCREMENT,
         PRIMARY KEY (order_id)
-        );`)
-    })
+        );`
+    )
     .then (() => {
       return database.queryAsync(`
         CREATE TABLE IF NOT EXISTS customers
@@ -61,9 +56,9 @@ var createTables = (database) => {
           FOREIGN KEY (order_id) REFERENCES orders(order_id)
         );`)
     })
-    .err((err) => {
+    .catch((err) => {
       console.log('Error encountered: ', err);
     })
 };
 
-module.exports.createTables = createTables;
+module.exports = createTables;
