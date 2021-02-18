@@ -9,6 +9,7 @@ var createTables = (database) => {
         CREATE TABLE IF NOT EXISTS orders
         (
         order_id INT NOT NULL AUTO_INCREMENT,
+        item varchar(500),
         PRIMARY KEY (order_id)
         );`
     )

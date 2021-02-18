@@ -29,4 +29,4 @@ connection.connectAsync()
     console.log('Error encountered during connectAsync: ', err);
   })
 
-module.exports.db = db;
+module.exports = db;

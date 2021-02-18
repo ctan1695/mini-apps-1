@@ -1,4 +1,5 @@
 function Name (props) {
+  console.log('props name: ', props.currentOrderID);
   return (
     <div>
       <h3>Enter your Name, Email and Password</h3>

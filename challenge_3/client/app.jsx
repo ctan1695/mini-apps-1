@@ -13,7 +13,7 @@ class App extends React.Component {
 
     this.state = {
       currentPage: Home,
-      userID: 0
+      orderID: 0
     }
 
     this.handleCheckout = this.handleCheckout.bind(this);
@@ -25,10 +25,9 @@ class App extends React.Component {
 
   handleCheckout() {
     var dataJSON = JSON.stringify({
-      name: '',
-      email: '',
-      password: ''
+      item: ''
       });
+    var orderCreated;
 
     $.ajax({
       method: 'POST',
@@ -37,15 +36,14 @@ class App extends React.Component {
       contentType: 'application/json', //Sending JSON data type to server
       dataType: 'text', //Expecting server to respond with a text data type (order's primary key as a string)
       success: (res) => {
-        console.log('handleCheckout success: ', res);
+        var parsedResponse = JSON.parse(res);
+        orderCreated = parsedResponse[0][0]['LAST_INSERT_ID()'];
+        this.setState({orderID: orderCreated, currentPage: Name});
       },
       error: (err) => {
         console.log('handleCheckout error: ', err);
       }
     })
-
-    this.setState({currentPage: Name});
-    // this.setState({userID: /* response from server */});
   }
 
   handleNextForName(event) {
@@ -105,7 +103,7 @@ class App extends React.Component {
 
   render () {
     return (
-      <this.state.currentPage handleCheckout={this.handleCheckout}
+      <this.state.currentPage currentOrderID={this.state.orderID} handleCheckout={this.handleCheckout}
       handleNextForName={this.handleNextForName} handleNextForAddress={this.handleNextForAddress} handleNextForPayment={this.handleNextForPayment} handlePurchase={this.handlePurchase} />
     )
   }
