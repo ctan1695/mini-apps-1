@@ -35,7 +35,7 @@ class App extends React.Component {
       url: mainUrl + '/checkout',
       data: dataJSON,
       contentType: 'application/json', //Sending JSON data type to server
-      dataType: 'text', //Expecting server to respond with a text data type (user's primary key as a string)
+      dataType: 'text', //Expecting server to respond with a text data type (order's primary key as a string)
       success: (res) => {
         console.log('handleCheckout success: ', res);
       },

@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.post('/checkout', (req, res) => {
-  //Insert into DB
+  //Insert into DB (orders table)
   //For primary key just inserted, send back to client in response.
   res.send('done');
 })
