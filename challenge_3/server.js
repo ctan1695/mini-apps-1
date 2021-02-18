@@ -1,7 +1,42 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const Promise = require('bluebird');
 const app = express();
 const port = 3000;
+
+
+var mysql = require('mysql');
+var database = 'shopping';
+const createTables = require('./database/config.js');
+
+var connection = mysql.createConnection({
+  user: 'root',
+  password: '',
+  database: 'shopping'
+});
+
+var db = Promise.promisifyAll(connection, {multiArgs: true});
+
+connection.connectAsync()
+  .then (() => {
+    console.log(`Successfully connected to database: ${database}`);
+  })
+  .then (() => {
+    db.queryAsync(`CREATE DATABASE IF NOT EXISTS ${database}`);
+  })
+  .then (() => {
+    db.queryAsync(`USE DATABASE ${database}`);
+  })
+  .then ((database) => {
+    createTables(database);
+  })
+  .catch ((err) => {
+    console.log('Error encountered during connectAsync: ', err);
+  })
+
+module.exports.db = db;
+
+
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
