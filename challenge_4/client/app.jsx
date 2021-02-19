@@ -4,7 +4,7 @@ class App extends React.Component {
     this.state = {
       player_one: 1,
       player_two: 2,
-      current_player: 0,
+      current_player: 1,
       board: [[0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0],
@@ -14,19 +14,58 @@ class App extends React.Component {
       game_over: false,
       winner_message: ''
     }
+
+    this.startGame = this.startGame.bind(this);
+    this.changePlayer = this.changePlayer.bind(this);
+    this.play = this.play.bind(this);
+  }
+
+  startGame() {
+    this.setState({current_player: this.state.player_one, board:
+      [[0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]]
+    });
+  }
+
+  changePlayer() {
+    if (this.state.currentPlayer === this.state.player_one) {
+      return this.state.player_two;
+    } else {
+      return this.state.player_one
+    }
+  }
+
+  play (colIndex) {
+    if(!this.state.gameOver) {
+      var board = this.state.board;
+
+      for (var i = 0; i < 0; i++) {
+        if (!board[i][colIndex]) {
+          board[i][colIndex] = this.state.current_player;
+          break;
+        }
+      }
+    }
   }
 
   render () {
     return (
-      <div>{this.state.board.map((row, i) =>
-      (<Row num={i} row={row} play={this.play} />))}</div>
+      <div>
+        <button class="new-game" onClick={this.startGame}>New Game</button>
+        <div>
+          {this.state.board.map((row, i) =>
+            (<Row num={i} row={row} play={this.play} />))}
+        </div>
+      </div>
     )
   }
 }
 
 var Row = (props) => {
-
-  console.log('props: ', props.row);
   return (
     <div>
       {props.row.map((slot, i) =>
