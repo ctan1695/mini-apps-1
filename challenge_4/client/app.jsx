@@ -32,7 +32,8 @@ class App extends React.Component {
   }
 
   changePlayer() {
-    if (this.state.currentPlayer === this.state.player_one) {
+    if (this.state.current_player === this.state.player_one) {
+
       return this.state.player_two;
     } else {
       return this.state.player_one
@@ -43,12 +44,19 @@ class App extends React.Component {
     if(!this.state.gameOver) {
       var board = this.state.board;
 
-      for (var i = 0; i < 0; i++) {
-        if (!board[i][colIndex]) {
+      for (var i = 5; i >= 0; i--) {
+        console.log('i: ', i);
+        console.log('board[i][colIndex]: ', board[i][colIndex])
+        if (board[i][colIndex] === 0) {
+
           board[i][colIndex] = this.state.current_player;
           break;
         }
       }
+
+      var nextPlayer = this.changePlayer();
+
+      this.setState({board: board, current_player: nextPlayer});
     }
   }
 
