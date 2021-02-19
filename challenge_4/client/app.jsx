@@ -12,16 +12,19 @@ class App extends React.Component {
               [0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0]],
       game_over: false,
-      winner_message: ''
+      winner: 0,
+      game_over_message: ''
     }
 
     this.startGame = this.startGame.bind(this);
     this.changePlayer = this.changePlayer.bind(this);
     this.play = this.play.bind(this);
+    this.checkHorizontalWin = this.checkHorizontalWin.bind(this);
+    this.checkWinner = this.checkWinner.bind(this);
   }
 
   startGame() {
-    this.setState({current_player: this.state.player_one, board:
+    this.setState({game_over_message: '', current_player: this.state.player_one, board:
       [[0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
@@ -45,18 +48,63 @@ class App extends React.Component {
       var board = this.state.board;
 
       for (var i = 5; i >= 0; i--) {
-        console.log('i: ', i);
-        console.log('board[i][colIndex]: ', board[i][colIndex])
         if (board[i][colIndex] === 0) {
-
           board[i][colIndex] = this.state.current_player;
           break;
         }
       }
 
       var nextPlayer = this.changePlayer();
+      var winner;
 
-      this.setState({board: board, current_player: nextPlayer});
+      if (this.checkHorizontalWin(this.state.player_one)) {
+        winner = this.state.player_one;
+      } else if (this.checkHorizontalWin(this.state.player_two)) {
+        winner = this.state.player_two;
+      } else {
+        winner = 0;
+      }
+
+      this.setState({board: board, current_player: nextPlayer, winner: winner}, () => {
+        if(this.checkWinner()) {
+          console.log('cw true')
+
+          this.setState({game_over_message: `Game over, Player ${this.state.winner} won!`, game_over: true}, () => {
+            console.log('this.state: ', this.state);
+          });
+        };
+      });
+    }
+  }
+
+  checkHorizontalWin(player) {
+    var board = this.state.board;
+    var winner = false;
+
+    for (var r = 0 ; r < board.length; r++) {
+      if (!winner) {
+        var row = board[r];
+        if (row.includes(player)) {
+          for (var c = 0; c < row.length; c++) {
+            if (row[c] === player && row[c + 1] === player && row[c + 2] === player && row[c + 3] === player) {
+              winner = true;
+              return winner;
+            }
+          }
+        }
+      }
+    }
+    return winner;
+  }
+
+  checkWinner() {
+    console.log('check winner');
+    console.log('this.state.winner: ', this.state.winner);
+    if (this.state.winner !== 0) {
+      console.log('true')
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -68,6 +116,7 @@ class App extends React.Component {
           {this.state.board.map((row, i) =>
             (<Row num={i} row={row} play={this.play} />))}
         </div>
+        <div id="message">{this.state.game_over_message}</div>
       </div>
     )
   }
