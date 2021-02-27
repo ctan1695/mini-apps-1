@@ -20,7 +20,11 @@ class App extends React.Component {
     this.changePlayer = this.changePlayer.bind(this);
     this.play = this.play.bind(this);
     this.checkHorizontalWin = this.checkHorizontalWin.bind(this);
+    this.checkVerticalWin = this.checkVerticalWin.bind(this);
+    this.checkPositiveDiagonal = this.checkPositiveDiagonal.bind(this);
+    this.checkNegativeDiagonal = this.checkNegativeDiagonal.bind(this);
     this.checkWinner = this.checkWinner.bind(this);
+    this.checkAnyWin = this.checkAnyWin.bind(this);
   }
 
   startGame() {
@@ -55,18 +59,12 @@ class App extends React.Component {
       }
 
       var nextPlayer = this.changePlayer();
-      var winner;
+      var winner = 0;
 
-      if (this.checkHorizontalWin(this.state.player_one)) {
+      if (this.checkAnyWin(this.state.player_one)) {
         winner = this.state.player_one;
-      } else if (this.checkHorizontalWin(this.state.player_two)) {
+      } else if (this.checkAnyWin(this.state.player_two)) {
         winner = this.state.player_two;
-      } else if (this.checkVerticalWin(this.state.player_one)) {
-        winner = this.state.player_one;
-      } else if (this.checkVerticalWin(this.state.player_two)) {
-        winner = this.state.player_two;
-      } else {
-        winner = 0;
       }
 
       this.setState({board: board, current_player: nextPlayer, winner: winner}, () => {
@@ -104,27 +102,52 @@ class App extends React.Component {
   checkVerticalWin(player) {
     var board = this.state.board;
     var winner = false;
-    var count = 0;
-    var colIndex;
 
-    for (var r = 0; r < board.length; r++) {
-      var row = board[r];
-      for (var i = 0; i < row.length; i++) {
-        if (row[i] === player) {
-          colIndex = i;
-          break;
+    for (var r = 3; r < board.length; r++) {
+      for (var c = 0; c < board[r].length; c++) {
+        if (board[r][c] === player &&
+            board[r - 1][c] === player &&
+            board[r - 2][c] === player &&
+            board[r - 3][c] === player) {
+              return true;
         }
       }
-      if (row[colIndex] === player) {
-        count++;
+    }
+    return false;
+  }
+
+  checkPositiveDiagonal(player) {
+    var board = this.state.board;
+    for (var r = 3; r < board.length; r++) {
+      for (var c = 0; c < 4; c++) {
+        if (board[r][c] === player &&
+            board[r - 1][c + 1] === player &&
+            board[r - 2][c + 2] === player &&
+            board[r - 3][c + 3] === player ) {
+          return true;
+        }
       }
     }
+    return false;
+  }
 
-    if (count === 4) {
-      return true;
-    } else {
-      return false;
+  checkNegativeDiagonal(player) {
+    var board = this.state.board;
+    for (var r = 3; r < board.length; r++) {
+      for (var c = 3; c < 7; c++) {
+        if (board[r][c] === player &&
+            board[r - 1][c - 1] === player &&
+            board[r - 2][c - 2] === player &&
+            board[r - 3][c - 3] === player) {
+          return true;
+        }
+      }
     }
+    return false;
+  }
+
+  checkAnyWin(player) {
+    return this.checkHorizontalWin(player) || this.checkVerticalWin(player) || this.checkPositiveDiagonal(player) || this.checkNegativeDiagonal(player);
   }
 
   checkWinner() {
