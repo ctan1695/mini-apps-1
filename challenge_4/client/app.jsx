@@ -61,6 +61,10 @@ class App extends React.Component {
         winner = this.state.player_one;
       } else if (this.checkHorizontalWin(this.state.player_two)) {
         winner = this.state.player_two;
+      } else if (this.checkVerticalWin(this.state.player_one)) {
+        winner = this.state.player_one;
+      } else if (this.checkVerticalWin(this.state.player_two)) {
+        winner = this.state.player_two;
       } else {
         winner = 0;
       }
@@ -95,6 +99,32 @@ class App extends React.Component {
       }
     }
     return winner;
+  }
+
+  checkVerticalWin(player) {
+    var board = this.state.board;
+    var winner = false;
+    var count = 0;
+    var colIndex;
+
+    for (var r = 0; r < board.length; r++) {
+      var row = board[r];
+      for (var i = 0; i < row.length; i++) {
+        if (row[i] === player) {
+          colIndex = i;
+          break;
+        }
+      }
+      if (row[colIndex] === player) {
+        count++;
+      }
+    }
+
+    if (count === 4) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   checkWinner() {
