@@ -69,12 +69,12 @@ class App extends React.Component {
 
       this.setState({board: board, current_player: nextPlayer, winner: winner}, () => {
         if(this.checkWinner()) {
-          console.log('cw true')
-
           this.setState({game_over_message: `Game over, Player ${this.state.winner} won!`, game_over: true}, () => {
             console.log('this.state: ', this.state);
           });
-        };
+        } else if(this.state.game_over === true && this.state.winner === 0) {
+          this.setState({game_over_message: `Game over, there is a tie!`});
+        }
       });
     }
   }
@@ -147,7 +147,20 @@ class App extends React.Component {
   }
 
   checkAnyWin(player) {
-    return this.checkHorizontalWin(player) || this.checkVerticalWin(player) || this.checkPositiveDiagonal(player) || this.checkNegativeDiagonal(player);
+    if (this.checkHorizontalWin(player) || this.checkVerticalWin(player) || this.checkPositiveDiagonal(player) || this.checkNegativeDiagonal(player)) {
+      return true;
+    }
+
+    var board = this.state.board;
+
+    for (r = 0; r < board.length; r++) {
+      var row = board[r];
+      if (row.includes(0)) {
+        return false;
+      }
+    }
+
+    this.setState({game_over: true});
   }
 
   checkWinner() {
